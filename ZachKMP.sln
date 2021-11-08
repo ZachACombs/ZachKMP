@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZachKMP", "ZachKMP.csproj", "{6716B554-0501-45BF-A3CA-1AC1A6C94071}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZachKMPTest", "..\ZachKMPTest\ZachKMPTest.csproj", "{C129E090-831A-437D-8954-7C4D88ED8186}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6716B554-0501-45BF-A3CA-1AC1A6C94071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6716B554-0501-45BF-A3CA-1AC1A6C94071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6716B554-0501-45BF-A3CA-1AC1A6C94071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6716B554-0501-45BF-A3CA-1AC1A6C94071}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C129E090-831A-437D-8954-7C4D88ED8186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C129E090-831A-437D-8954-7C4D88ED8186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C129E090-831A-437D-8954-7C4D88ED8186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C129E090-831A-437D-8954-7C4D88ED8186}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04ED3C65-CE3A-4433-8A34-590CFB0578CE}
+	EndGlobalSection
+EndGlobal
