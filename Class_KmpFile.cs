@@ -241,5 +241,86 @@ namespace ZachKMP
                 Var_Sections.AddRange(sections);
             }
         }
+        
+        ///<summary>Saves KMP File</summary>
+        ///<param name="fileName">File path to save KMP File</param>
+        public void Save(string fileName)
+        {
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+            using (BinaryWriter binWriter = new BinaryWriter(File.OpenWrite(fileName)))
+            {
+                //File magic
+                binWriter.Write(Encoding.ASCII.GetBytes(FileMagic));
+
+                //File length
+                long fileLengthOffset = binWriter.BaseStream.Length;
+                binWriter.Write(new byte[] { 0, 0, 0, 0 });
+
+                //Number of sections in file
+                byte[] sectionCount_Bytes = BitConverter.GetBytes(SectionCount);
+                if (BitConverter.IsLittleEndian) Array.Reverse(sectionCount_Bytes);
+                binWriter.Write(sectionCount_Bytes);
+
+                //Header Length
+                long headerLengthOffset = binWriter.BaseStream.Length;
+                binWriter.Write(new byte[] { 0, 0 });
+
+                //Version Number
+                byte[] versionNumber_Bytes = BitConverter.GetBytes(VersionNumber);
+                if (BitConverter.IsLittleEndian) Array.Reverse(versionNumber_Bytes);
+                binWriter.Write(versionNumber_Bytes);
+
+                //Section offsets
+                long[] sectionOffsetsInHeader = new long[SectionCount];
+                for (int n = 0; n < SectionCount; n += 1)
+                {
+                    sectionOffsetsInHeader[n] = binWriter.BaseStream.Length;
+                    binWriter.Write(new byte[] { 0, 0, 0, 0 });
+                }
+
+                //Fix Header Length
+                ushort headerLength = (ushort)binWriter.BaseStream.Length;
+                byte[] headerLength_Bytes = BitConverter.GetBytes(headerLength);
+                if (BitConverter.IsLittleEndian) Array.Reverse(headerLength_Bytes);
+                binWriter.BaseStream.Position = headerLengthOffset;
+                binWriter.Write(headerLength_Bytes);
+                binWriter.BaseStream.Position = binWriter.BaseStream.Length;
+
+                for (int n = 0; n < SectionCount; n += 1)
+                {
+                    //Fix Section Offset
+                    uint sectionOffset = (uint)(binWriter.BaseStream.Length - headerLength);
+                    byte[] sectionOffset_Bytes = BitConverter.GetBytes(sectionOffset);
+                    if (BitConverter.IsLittleEndian) Array.Reverse(sectionOffset_Bytes);
+                    binWriter.BaseStream.Position = sectionOffsetsInHeader[n];
+                    binWriter.Write(sectionOffset_Bytes);
+                    binWriter.BaseStream.Position = binWriter.BaseStream.Length;
+
+                    KmpSection section = Var_Sections[n];
+
+                    //Section name
+                    binWriter.Write(Encoding.ASCII.GetBytes(section.SectionName));
+
+                    //Number of Entries
+                    byte[] entryCount_Bytes = BitConverter.GetBytes(section.EntryCount);
+                    if (BitConverter.IsLittleEndian) Array.Reverse(entryCount_Bytes);
+                    binWriter.Write(entryCount_Bytes);
+
+                    //Additional value
+                    byte[] additionalValue_Bytes = BitConverter.GetBytes(section.AdditionalValue);
+                    if (BitConverter.IsLittleEndian) Array.Reverse(additionalValue_Bytes);
+                    binWriter.Write(additionalValue_Bytes);
+                    binWriter.Write(section.GetRawData());
+                }
+
+                //Fix file length
+                byte[] fileLength_Bytes = BitConverter.GetBytes((uint)binWriter.BaseStream.Length);
+                if (BitConverter.IsLittleEndian) Array.Reverse(fileLength_Bytes);
+                binWriter.BaseStream.Position = fileLengthOffset;
+                binWriter.Write(fileLength_Bytes);
+                binWriter.BaseStream.Position = binWriter.BaseStream.Length;
+            }
+        }
     }
 }
