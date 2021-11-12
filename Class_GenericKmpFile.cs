@@ -7,9 +7,11 @@ using System.IO;
 
 namespace ZachKMP
 {
-    ///<summary>Represents a KMP file. Contains File Magic, Version Number, and Sections</summary>
-    public class KmpFile
+    ///<summary>Represents a Generic KMP file.</summary>
+    public class GenericKmpFile
     {
+        private const int Con_MaxSectionCount = ushort.MaxValue;
+
         //File Magic
         private string Var_FileMagic;
         ///<summary>File magic (must have exactly 4 ASCII characters)</summary>
@@ -45,7 +47,7 @@ namespace ZachKMP
 
         //Sections
         #region
-        private List<KmpSection> Var_Sections;
+        private List<GenericKmpSection> Var_Sections;
         ///<summary>Number of sections in KMP File</summary>
         public ushort SectionCount
         {
@@ -57,7 +59,7 @@ namespace ZachKMP
         ///<summary>Returns section at the specified index</summary>
         ///<param name="index">Index of section</param>
         ///<returns>Section at specified index</returns>
-        public KmpSection SectionAt(int index)
+        public GenericKmpSection SectionAt(int index)
         {
             if (index < 0)
                 throw new ArgumentOutOfRangeException(nameof(index), nameof(index) + " is less than zero");
@@ -67,9 +69,9 @@ namespace ZachKMP
         }
         ///<summary>Adds a section</summary>
         ///<param name="section">Section to add</param>
-        public void AddSection(KmpSection section)
+        public void AddSection(GenericKmpSection section)
         {
-            if (Var_Sections.Count >= ushort.MaxValue)
+            if (Var_Sections.Count >= Con_MaxSectionCount)
             {
                 throw new Exception("Maximum number of sections has been reached");
             }
@@ -78,7 +80,7 @@ namespace ZachKMP
         ///<summary>Removes the first occurance of specified section</summary>
         ///<param name="section">Section to remove</param>
         ///<returns>Whether or not removal was successful</returns>
-        public bool RemoveSection(KmpSection section)
+        public bool RemoveSection(GenericKmpSection section)
         {
             return Var_Sections.Remove(section);
         }
@@ -96,7 +98,7 @@ namespace ZachKMP
         ///<summary>Returns zero-based index of first occurance of specified section</summary>
         ///<param name="section">Section to find</param>
         ///<returns>Index of first occurance of specified section (or -1 if not found)</returns>
-        public int IndexOfSection(KmpSection section)
+        public int IndexOfSection(GenericKmpSection section)
         {
             return Var_Sections.IndexOf(section);
         }
@@ -107,7 +109,7 @@ namespace ZachKMP
         {
             for (int n = 0; n < Var_Sections.Count; n += 1)
             {
-                if (Var_Sections[n].SectionName == name)
+                if (Var_Sections[n].GetSectionName() == name)
                     return n;
             }
             return -1;
@@ -129,10 +131,10 @@ namespace ZachKMP
             {
                 for (int m = 0; m < (n - 1); m += 1)
                 {
-                    KmpSection currSection = Var_Sections[m];
-                    KmpSection nextSection = Var_Sections[m + 1];
-                    int currNameIndex = Array.IndexOf(sectionNames, currSection.SectionName);
-                    int nextNameIndex = Array.IndexOf(sectionNames, nextSection.SectionName);
+                    GenericKmpSection currSection = Var_Sections[m];
+                    GenericKmpSection nextSection = Var_Sections[m + 1];
+                    int currNameIndex = Array.IndexOf(sectionNames, currSection.GetSectionName());
+                    int nextNameIndex = Array.IndexOf(sectionNames, nextSection.GetSectionName());
 
                     if ((currNameIndex == -1) | ((currNameIndex > nextNameIndex) & (nextNameIndex != -1)))
                     {
@@ -145,17 +147,17 @@ namespace ZachKMP
         #endregion
 
         ///<summary>Creates a new KMP file</summary>
-        public KmpFile() : this("TEST", 0, new KmpSection[] { }) { }
+        public GenericKmpFile() : this("TEST", 0, new GenericKmpSection[] { }) { }
         ///<summary>Creates a new KMP file</summary>
         ///<param name="fileMagic">File Magic</param>
         ///<param name="versionNumber">Version Number</param>
         ///<param name="sections">Sections</param>
-        public KmpFile(string fileMagic, uint versionNumber, KmpSection[] sections)
+        public GenericKmpFile(string fileMagic, uint versionNumber, GenericKmpSection[] sections)
         {
             FileMagic = fileMagic;
             VersionNumber = versionNumber;
 
-            if (sections.Length > ushort.MaxValue)
+            if (sections.Length > Con_MaxSectionCount)
             {
                 throw new ArgumentException("KmpSection array has more than " + ushort.MaxValue + " entries", nameof(sections));
             }
@@ -164,7 +166,7 @@ namespace ZachKMP
 
         ///<summary>Loads data from an existing KMP file</summary>
         ///<param name="fileName">File path of existing KMP file</param>
-        public void Load(string fileName)
+         public void Load(string fileName)
         {
             const int sectionHeaderLength = 0x08;
 
@@ -176,28 +178,20 @@ namespace ZachKMP
                 string fileMagic = Encoding.ASCII.GetString(binReader.ReadBytes(4));
                 binReader.BaseStream.Position = 0x08;
 
-                byte[] numberOfSections_Bytes = binReader.ReadBytes(2);
-                if (BitConverter.IsLittleEndian) Array.Reverse(numberOfSections_Bytes);
-                ushort numberOfSections = BitConverter.ToUInt16(numberOfSections_Bytes, 0);
+                ushort numberOfSections = ByteConverter.ToUInt16(binReader.ReadBytes(2));
 
-                byte[] headerLength_Bytes = binReader.ReadBytes(2);
-                if (BitConverter.IsLittleEndian) Array.Reverse(headerLength_Bytes);
-                ushort headerLength = BitConverter.ToUInt16(headerLength_Bytes, 0);
+                ushort headerLength = ByteConverter.ToUInt16(binReader.ReadBytes(2));
 
                 if (streamLength < headerLength)
                     throw new NotSupportedException("File ends before header");
                 binReader.BaseStream.Position = headerLength - (numberOfSections * 0x04) - 0x04;
 
-                byte[] versionNumber_Bytes = binReader.ReadBytes(4);
-                if (BitConverter.IsLittleEndian) Array.Reverse(versionNumber_Bytes);
-                uint versionNumber = BitConverter.ToUInt32(versionNumber_Bytes, 0);
+                uint versionNumber = ByteConverter.ToUInt32(binReader.ReadBytes(4));
 
                 uint[] sectionOffsets = new uint[numberOfSections];
                 for (int n = 0; n < numberOfSections; n += 1)
                 {
-                    byte[] bytes = binReader.ReadBytes(4);
-                    if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-                    sectionOffsets[n] = BitConverter.ToUInt32(bytes, 0);
+                    sectionOffsets[n] = ByteConverter.ToUInt32(binReader.ReadBytes(4));
 
                     if ((sectionOffsets[n] + headerLength) >= streamLength)
                         throw new NotSupportedException("Section " + (n + 1) + " offset is greater than file length");
@@ -208,7 +202,7 @@ namespace ZachKMP
                     }
                 }
 
-                KmpSection[] sections = new KmpSection[numberOfSections];
+                GenericKmpSection[] sections = new GenericKmpSection[numberOfSections];
                 for (int n = 0; n < numberOfSections; n += 1)
                 {
                     long sectionEnd;
@@ -222,17 +216,13 @@ namespace ZachKMP
                     binReader.BaseStream.Position = headerLength + sectionOffsets[n];
                     string sectionName = Encoding.ASCII.GetString(binReader.ReadBytes(4));
 
-                    byte[] entryCount_Bytes = binReader.ReadBytes(2);
-                    if (BitConverter.IsLittleEndian) Array.Reverse(entryCount_Bytes);
-                    ushort entryCount = BitConverter.ToUInt16(entryCount_Bytes, 0);
+                    ushort entryCount = ByteConverter.ToUInt16(binReader.ReadBytes(2));
 
-                    byte[] additionalValue_Bytes = binReader.ReadBytes(2);
-                    if (BitConverter.IsLittleEndian) Array.Reverse(additionalValue_Bytes);
-                    ushort additionalValue = BitConverter.ToUInt16(additionalValue_Bytes, 0);
+                    ushort additionalValue = ByteConverter.ToUInt16(binReader.ReadBytes(2));
 
                     byte[] rawData = binReader.ReadBytes((int)(sectionEnd - binReader.BaseStream.Position));
 
-                    sections[n] = new KmpSection(sectionName, entryCount, additionalValue, rawData);
+                    sections[n] = new GenericKmpSection(sectionName, entryCount, additionalValue, rawData);
                 }
 
                 FileMagic = fileMagic;
@@ -241,7 +231,7 @@ namespace ZachKMP
                 Var_Sections.AddRange(sections);
             }
         }
-        
+
         ///<summary>Saves KMP File</summary>
         ///<param name="fileName">File path to save KMP File</param>
         public void Save(string fileName)
@@ -258,18 +248,14 @@ namespace ZachKMP
                 binWriter.Write(new byte[] { 0, 0, 0, 0 });
 
                 //Number of sections in file
-                byte[] sectionCount_Bytes = BitConverter.GetBytes(SectionCount);
-                if (BitConverter.IsLittleEndian) Array.Reverse(sectionCount_Bytes);
-                binWriter.Write(sectionCount_Bytes);
+                binWriter.Write(ByteConverter.GetBytes(SectionCount));
 
                 //Header Length
                 long headerLengthOffset = binWriter.BaseStream.Length;
                 binWriter.Write(new byte[] { 0, 0 });
 
                 //Version Number
-                byte[] versionNumber_Bytes = BitConverter.GetBytes(VersionNumber);
-                if (BitConverter.IsLittleEndian) Array.Reverse(versionNumber_Bytes);
-                binWriter.Write(versionNumber_Bytes);
+                binWriter.Write(ByteConverter.GetBytes(VersionNumber));
 
                 //Section offsets
                 long[] sectionOffsetsInHeader = new long[SectionCount];
@@ -281,44 +267,34 @@ namespace ZachKMP
 
                 //Fix Header Length
                 ushort headerLength = (ushort)binWriter.BaseStream.Length;
-                byte[] headerLength_Bytes = BitConverter.GetBytes(headerLength);
-                if (BitConverter.IsLittleEndian) Array.Reverse(headerLength_Bytes);
                 binWriter.BaseStream.Position = headerLengthOffset;
-                binWriter.Write(headerLength_Bytes);
+                binWriter.Write(ByteConverter.GetBytes(headerLength));
                 binWriter.BaseStream.Position = binWriter.BaseStream.Length;
 
                 for (int n = 0; n < SectionCount; n += 1)
                 {
                     //Fix Section Offset
                     uint sectionOffset = (uint)(binWriter.BaseStream.Length - headerLength);
-                    byte[] sectionOffset_Bytes = BitConverter.GetBytes(sectionOffset);
-                    if (BitConverter.IsLittleEndian) Array.Reverse(sectionOffset_Bytes);
                     binWriter.BaseStream.Position = sectionOffsetsInHeader[n];
-                    binWriter.Write(sectionOffset_Bytes);
+                    binWriter.Write(ByteConverter.GetBytes(sectionOffset));
                     binWriter.BaseStream.Position = binWriter.BaseStream.Length;
 
-                    KmpSection section = Var_Sections[n];
+                    GenericKmpSection section = Var_Sections[n];
 
                     //Section name
-                    binWriter.Write(Encoding.ASCII.GetBytes(section.SectionName));
+                    binWriter.Write(Encoding.ASCII.GetBytes(section.GetSectionName()));
 
                     //Number of Entries
-                    byte[] entryCount_Bytes = BitConverter.GetBytes(section.EntryCount);
-                    if (BitConverter.IsLittleEndian) Array.Reverse(entryCount_Bytes);
-                    binWriter.Write(entryCount_Bytes);
+                    binWriter.Write(ByteConverter.GetBytes(section.GetEntryCount()));
 
                     //Additional value
-                    byte[] additionalValue_Bytes = BitConverter.GetBytes(section.AdditionalValue);
-                    if (BitConverter.IsLittleEndian) Array.Reverse(additionalValue_Bytes);
-                    binWriter.Write(additionalValue_Bytes);
+                    binWriter.Write(ByteConverter.GetBytes(section.GetAdditionalValue()));
                     binWriter.Write(section.GetRawData());
                 }
 
                 //Fix file length
-                byte[] fileLength_Bytes = BitConverter.GetBytes((uint)binWriter.BaseStream.Length);
-                if (BitConverter.IsLittleEndian) Array.Reverse(fileLength_Bytes);
                 binWriter.BaseStream.Position = fileLengthOffset;
-                binWriter.Write(fileLength_Bytes);
+                binWriter.Write(ByteConverter.GetBytes((uint)binWriter.BaseStream.Length));
                 binWriter.BaseStream.Position = binWriter.BaseStream.Length;
             }
         }
