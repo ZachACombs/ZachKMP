@@ -11,10 +11,35 @@ namespace ZachKMP
         public float X;
         public float Y;
 
+        public static Vector2 operator +(Vector2 a, Vector2 b)
+        {
+            return new Vector2(
+                a.X + b.X,
+                a.Y + b.Y);
+        }
+        public static Vector2 operator -(Vector2 a, Vector2 b)
+        {
+            return new Vector2(
+                a.X - b.X,
+                a.Y - b.Y);
+        }
+
         public Vector2(float x, float y)
         {
             X = x;
             Y = y;
+        }
+        public static Vector2 operator *(Vector2 a, Vector2 b)
+        {
+            return new Vector2(
+                a.X * b.X,
+                a.Y * b.Y);
+        }
+        public static Vector2 operator /(Vector2 a, Vector2 b)
+        {
+            return new Vector2(
+                a.X / b.X,
+                a.Y / b.Y);
         }
 
         public static Vector2 Zero = new Vector2(0f, 0f);
@@ -25,6 +50,35 @@ namespace ZachKMP
         public float X;
         public float Y;
         public float Z;
+
+        public static Vector3 operator +(Vector3 a, Vector3 b)
+        {
+            return new Vector3(
+                a.X + b.X,
+                a.Y + b.Y,
+                a.Z + b.Z);
+        }
+        public static Vector3 operator -(Vector3 a, Vector3 b)
+        {
+            return new Vector3(
+                a.X - b.X,
+                a.Y - b.Y,
+                a.Z - b.Z);
+        }
+        public static Vector3 operator *(Vector3 a, Vector3 b)
+        {
+            return new Vector3(
+                a.X * b.X,
+                a.Y * b.Y,
+                a.Z * b.Z);
+        }
+        public static Vector3 operator /(Vector3 a, Vector3 b)
+        {
+            return new Vector3(
+                a.X / b.X,
+                a.Y / b.Y,
+                a.Z / b.Z);
+        }
 
         public Vector3(float x, float y, float z)
         {

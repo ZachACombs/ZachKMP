@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace ZachKMP
 {
+    ///<summary>A KTPT entry</summary>
     public class KmpMkwKTPTEntry
     {
         private Vector3 Var_Position;
-        ///<summary>A 3D position vector of the start position.<br/>
-        ///<br/>
-        ///<a href="http://wiki.tockdom.com/wiki/KMP_(File_Format)#KTPT" />
-        ///</summary>
+        ///<summary>A 3D position vector of the start position.</summary>
         public Vector3 Position
         {
             set
@@ -26,10 +24,7 @@ namespace ZachKMP
         }
 
         private Vector3 Var_Rotation;
-        ///<summary>A 3D rotation vector of the start position.<br/>
-        ///<br/>
-        ///<a href="http://wiki.tockdom.com/wiki/KMP_(File_Format)#KTPT" />
-        ///</summary>
+        ///<summary>A 3D rotation vector of the start position.</summary>
         public Vector3 Rotation
         {
             set
@@ -45,9 +40,7 @@ namespace ZachKMP
         private short Var_PlayerIndex;
         ///<summary>The player index.<br/>
         ///For races, the first entry is used to define a start area, independent of its value (usually set to -1=0xffff).<br/>
-        ///In battle courses, the value determines which players start here.Values 0 to 5 are for the red team and values 6 to 11 are for the blue team.The order of the entries is irrelevant.<br/>
-        ///<br/>
-        ///<a href="http://wiki.tockdom.com/wiki/KMP_(File_Format)#KTPT" />
+        ///In battle courses, the value determines which players start here.Values 0 to 5 are for the red team and values 6 to 11 are for the blue team.The order of the entries is irrelevant.
         ///</summary>
         public short PlayerIndex
         {
@@ -87,6 +80,8 @@ namespace ZachKMP
             Padding = 0;
         }
     }
+
+    ///<summary>A KTPT section</summary>
     public class KmpMkwKTPTSection : CommonKmpSection
     {
         private KmpEntryList<KmpMkwKTPTEntry> Var_Entries;
@@ -135,7 +130,7 @@ namespace ZachKMP
 
             Var_Entries = new KmpEntryList<KmpMkwKTPTEntry>();
 
-            ushort additionalValue = section.GetAdditionalValue();
+            SetAdditionalValue(section.GetAdditionalValue());
             ushort entryCount = section.GetEntryCount();
             byte[] rawData = section.GetRawData();
 

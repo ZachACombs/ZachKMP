@@ -41,12 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class_KmpMkwCKPH.cs" />
+    <Compile Include="Class_KmpMkwCKPT.cs" />
     <Compile Include="Class_CommonKmpSection.cs" />
     <Compile Include="Class_Functions.cs" />
     <Compile Include="Class_GenericKmpSection.cs" />
     <Compile Include="Class_GenericKmpFile.cs" />
+    <Compile Include="Class_KmpCommonPathEntry.cs" />
     <Compile Include="Class_KmpEntryList.cs" />
+    <Compile Include="Class_KmpMkwENPH.cs" />
+    <Compile Include="Class_KmpMkwGOBJ.cs" />
+    <Compile Include="Class_KmpMkwITPH.cs" />
+    <Compile Include="Class_KmpMkwITPT.cs" />
+    <Compile Include="Class_KmpMkwENPT.cs" />
     <Compile Include="Class_KmpMkwKTPT.cs" />
+    <Compile Include="Class_KmpMkwPOTI.cs" />
     <Compile Include="Class_KmpSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs.cs" />
