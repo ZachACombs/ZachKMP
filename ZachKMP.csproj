@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class_KmpMkwAREA.cs" />
+    <Compile Include="Class_KmpMkwCAME.cs" />
     <Compile Include="Class_KmpMkwCKPH.cs" />
     <Compile Include="Class_KmpMkwCKPT.cs" />
     <Compile Include="Class_CommonKmpSection.cs" />

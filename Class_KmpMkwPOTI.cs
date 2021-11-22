@@ -171,7 +171,6 @@ namespace ZachKMP
             return Var_SectionName;
         }
 
-        private ushort Var_AdditionalValue;
         public override ushort GetAdditionalValue()
         {
             ushort pointCount = 0;
