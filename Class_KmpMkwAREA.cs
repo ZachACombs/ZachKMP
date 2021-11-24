@@ -190,21 +190,12 @@ namespace ZachKMP
         /// <param name="routeId">Route ID used by AREA type 3.</param>
         /// <param name="enemyPointId">Enemy point ID. This value is used by AREA type 4.</param>
         public KmpMkwAREAEntry(byte areaShape, byte areaType, byte cameIndex, byte priorityValue, 
-            Vector3 position, Vector3 rotation, Vector3 scale,
-            ushort setting1, ushort setting2, byte routeId, byte enemyPointId)
+                Vector3 position, Vector3 rotation, Vector3 scale,
+                ushort setting1, ushort setting2, byte routeId, byte enemyPointId) : 
+            this(areaShape, areaType, cameIndex, priorityValue,
+                position, rotation, scale,
+                setting1, setting2, routeId, enemyPointId, 0)
         {
-            AreaShape = areaShape;
-            AreaType = areaType;
-            CAMEIndex = cameIndex;
-            PriorityValue = priorityValue;
-            Position = position;
-            Rotation = rotation;
-            Scale = scale;
-            Setting1 = setting1;
-            Setting2 = setting2;
-            RouteId = routeId;
-            EnemyPointId = enemyPointId;
-            Padding = 0;
         }
 
         ///<summary>Creates an AREA Entry</summary>

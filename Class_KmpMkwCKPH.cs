@@ -22,6 +22,21 @@ namespace ZachKMP
             }
         }
 
+        ///<summary>Creates a CKPH entry</summary>
+        ///<param name="pointStart">Index in points section of starting point</param>
+        ///<param name="pointLength">Number of points in group</param>
+        ///<param name="prevGroup1">Index of 1st previous point group</param>
+        ///<param name="prevGroup2">Index of 2nd previous point group</param>
+        ///<param name="prevGroup3">Index of 3rd previous point group</param>
+        ///<param name="prevGroup4">Index of 4th previous point group</param>
+        ///<param name="prevGroup5">Index of 5th previous point group</param>
+        ///<param name="prevGroup6">Index of 6th previous point group</param>
+        ///<param name="nextGroup1">Index of 1st next point group</param>
+        ///<param name="nextGroup2">Index of 2nd next point group</param>
+        ///<param name="nextGroup3">Index of 3rd next point group</param>
+        ///<param name="nextGroup4">Index of 4th next point group</param>
+        ///<param name="nextGroup5">Index of 5th next point group</param>
+        ///<param name="nextGroup6">Index of 6th next point group</param>
         public KmpMkwCKPHEntry(byte pointStart, byte pointLength,
                 byte prevGroup1, byte prevGroup2, byte prevGroup3, byte prevGroup4, byte prevGroup5, byte prevGroup6,
                 byte nextGroup1, byte nextGroup2, byte nextGroup3, byte nextGroup4, byte nextGroup5, byte nextGroup6) :
@@ -29,6 +44,31 @@ namespace ZachKMP
                 prevGroup1, prevGroup2, prevGroup3, prevGroup4, prevGroup5, prevGroup6,
                 nextGroup1, nextGroup2, nextGroup3, nextGroup4, nextGroup5, nextGroup6,
                 0)
+        { }
+        ///<summary>Creates a CKPH entry</summary>
+        ///<param name="pointStart">Index in points section of starting point</param>
+        ///<param name="pointLength">Number of points in group</param>
+        ///<param name="prevGroup1">Index of 1st previous point group</param>
+        ///<param name="prevGroup2">Index of 2nd previous point group</param>
+        ///<param name="prevGroup3">Index of 3rd previous point group</param>
+        ///<param name="prevGroup4">Index of 4th previous point group</param>
+        ///<param name="prevGroup5">Index of 5th previous point group</param>
+        ///<param name="prevGroup6">Index of 6th previous point group</param>
+        ///<param name="nextGroup1">Index of 1st next point group</param>
+        ///<param name="nextGroup2">Index of 2nd next point group</param>
+        ///<param name="nextGroup3">Index of 3rd next point group</param>
+        ///<param name="nextGroup4">Index of 4th next point group</param>
+        ///<param name="nextGroup5">Index of 5th next point group</param>
+        ///<param name="nextGroup6">Index of 6th next point group</param>
+        ///<param name="padding">Padding</param>
+        public KmpMkwCKPHEntry(byte pointStart, byte pointLength,
+               byte prevGroup1, byte prevGroup2, byte prevGroup3, byte prevGroup4, byte prevGroup5, byte prevGroup6,
+               byte nextGroup1, byte nextGroup2, byte nextGroup3, byte nextGroup4, byte nextGroup5, byte nextGroup6,
+               ushort padding) :
+           base(pointStart, pointLength,
+               prevGroup1, prevGroup2, prevGroup3, prevGroup4, prevGroup5, prevGroup6,
+               nextGroup1, nextGroup2, nextGroup3, nextGroup4, nextGroup5, nextGroup6,
+               padding)
         { }
 
         internal KmpMkwCKPHEntry(byte[] rawData) : base(rawData) { }

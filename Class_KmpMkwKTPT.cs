@@ -72,12 +72,22 @@ namespace ZachKMP
         ///<param name="position">A 3D position vector of the start position.</param>
         ///<param name="rotation">A 3D rotation vector of the start position.</param>
         ///<param name="playerIndex">The player index.</param>
-        public KmpMkwKTPTEntry(Vector3 position, Vector3 rotation, short playerIndex)
+        public KmpMkwKTPTEntry(Vector3 position, Vector3 rotation, short playerIndex) :
+            this(position, rotation, playerIndex, 0)
+        {
+            
+        }
+        ///<summary>Creates a KTPT entry</summary>
+        ///<param name="position">A 3D position vector of the start position.</param>
+        ///<param name="rotation">A 3D rotation vector of the start position.</param>
+        ///<param name="playerIndex">The player index.</param>
+        ///<param name="padding">Padding</param>
+        public KmpMkwKTPTEntry(Vector3 position, Vector3 rotation, short playerIndex, ushort padding)
         {
             Position = position;
             Rotation = rotation;
             PlayerIndex = playerIndex;
-            Padding = 0;
+            Padding = padding;
         }
     }
 
@@ -178,6 +188,10 @@ namespace ZachKMP
                     ByteConverter.ToInt16(new byte[] {
                         rawData[offset + 0x18],
                         rawData[offset + 0x19]
+                        }),
+                    ByteConverter.ToUInt16(new byte[] {
+                        rawData[offset + 0x1A],
+                        rawData[offset + 0x1B]
                         })
                     ));
             }
